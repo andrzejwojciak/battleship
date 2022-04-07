@@ -3,6 +3,11 @@
 </template>
 
 <style>
+@font-face {
+  font-family: 'Ultra';
+  src: local('Ultra'), url(./assets/fonts/Ultra-Regular.ttf) format('truetype');
+}
+
 body {
   margin: 0;
 }
