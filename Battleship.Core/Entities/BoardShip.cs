@@ -11,4 +11,7 @@ public class BoardShip
     public bool Destroyed { get; set; }
     public int StartPoint { get; set; }
     public int Endpoint { get; set; }
+
+    public Board Board { get; set; }
+    public Ship Ship { get; set; }
 }

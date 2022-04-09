@@ -2,9 +2,14 @@
 
 public class Player
 {
+    public Player()
+    {
+        Moves = new HashSet<Move>();
+    }
+
     public string Id { get; set; }
     public string Name { get; set; }
-    public string GameId { get; set; }
-    
-    public Board Board { get; set; }
+
+    public IEnumerable<Board> Boards { get; set; }
+    public IEnumerable<Move> Moves { get; set; }
 }
