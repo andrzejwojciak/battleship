@@ -1,10 +1,11 @@
 ﻿using System.Reflection;
 using Battleship.Core.Entities;
+using Battleship.Core.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Battleship.Data;
 
-public class BattleshipDbContext : DbContext
+public class BattleshipDbContext : DbContext, IBattleshipDbContext
 {
     public BattleshipDbContext(DbContextOptions<BattleshipDbContext> options)
         : base(options)
@@ -20,7 +21,6 @@ public class BattleshipDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
         modelBuilder.Entity<Ship>().HasData(
@@ -30,5 +30,15 @@ public class BattleshipDbContext : DbContext
             new Ship {Id = 4, Name = "Submarine", Length = 3},
             new Ship {Id = 5, Name = "Destroyer", Length = 2}
         );
+    }
+
+    public Task EnsureCreatedAsync()
+    {
+        return Database.EnsureCreatedAsync();
+    }
+
+    public Task SaveChangesAsync()
+    {
+        return SaveChangesAsync(new CancellationToken());
     }
 }

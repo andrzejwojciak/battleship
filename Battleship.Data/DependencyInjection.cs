@@ -1,4 +1,5 @@
-﻿using Battleship.Core.Interfaces.Repositories;
+﻿using Battleship.Core.Interfaces.ProxyRepositories;
+using Battleship.Core.Interfaces.Repositories;
 using Battleship.Data.Cache;
 using Battleship.Data.Cache.Interfaces;
 using Battleship.Data.Repositories;
@@ -11,7 +12,7 @@ namespace Battleship.Data;
 public static class DependencyInjection
 {
     public static void AddDataAccessLayer(this IServiceCollection services)
-    {
+    {      
         services.AddDbContext<BattleshipDbContext>(
             options =>
             {
@@ -19,7 +20,6 @@ public static class DependencyInjection
                 options.ConfigureWarnings(b => b.Ignore(InMemoryEventId.TransactionIgnoredWarning));
             });
 
-        services.AddSingleton<IGameCache, GameCache>();
-        services.AddTransient<IGameRepository, GameRepository>();
+        services.AddScoped<IBattleshipDbContext>(provider => provider.GetService<BattleshipDbContext>()!);
     }
 }
