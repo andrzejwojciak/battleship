@@ -9,7 +9,7 @@
 
     <div>
       <div>
-        <button class="ship-button danger"></button>
+        <button class="ship-button danger" @click="$emit('resetGame')"></button>
       </div>
       <div class="button-label">RESET GAME</div>
     </div>
@@ -18,7 +18,9 @@
 
 <script>
 export default {
+  props: ['gameId'],
   name: 'ButtonsComponent',
+  methods: {},
 };
 </script>
 <style scoped>

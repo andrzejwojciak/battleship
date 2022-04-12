@@ -4,6 +4,7 @@ using Battleship.Core.Entities;
 using Battleship.Core.Interfaces.ProxyRepositories;
 using Battleship.Core.Interfaces.Repositories;
 using Battleship.Core.Interfaces.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace Battleship.Core.Services;
 
@@ -13,16 +14,14 @@ public class GameService : IGameService
     private readonly IBoardService _boardService;
     private readonly IBoardShipService _boardShipService;
     private readonly IBattleshipDbContext _context;
-    private readonly IGameProxyRepository _gameProxyRepository;
 
     public GameService(IPlayerService playerService, IBoardService boardService, IBattleshipDbContext context,
-        IBoardShipService boardShipService, IGameProxyRepository gameProxyRepository)
+        IBoardShipService boardShipService)
     {
         _playerService = playerService;
         _boardService = boardService;
         _context = context;
         _boardShipService = boardShipService;
-        _gameProxyRepository = gameProxyRepository;
     }
 
     public async Task<GameStateDto> CreateGameAsync(CreateGameModel createGameModel)
@@ -38,6 +37,25 @@ public class GameService : IGameService
             await _boardShipService.DeploysShipsAsync(board);
         }
 
+        return GameToGameStateDto(game);
+    }
+
+    public async Task<GameStateDto?> GetGameStateDtoByIdAsync(string gameId)
+    {
+        var game = await _context.Games
+            .Include(game => game.Boards)
+            .ThenInclude(board => board.Player)
+            .Include(game => game.Boards)
+            .ThenInclude(board => board.BoardShips)
+            .ThenInclude(boardShip => boardShip.Ship)
+            .Include(game => game.Moves)
+            .FirstOrDefaultAsync(game => game.Id == gameId);
+
+        return game != null ? GameToGameStateDto(game) : null;
+    }
+
+    private static GameStateDto GameToGameStateDto(Game game)
+    {
         return new GameStateDto
         {
             GameId = game.Id,
@@ -47,9 +65,9 @@ public class GameService : IGameService
                 PlayerName = board.Player.Name,
                 Ships = board.BoardShips.Select(ship => new BoardShipDto
                 {
-                    StartPoint = ship.StartPoint, 
-                    Endpoint = ship.Endpoint, 
-                    Direction = ship.Direction.ToString(), 
+                    StartPoint = ship.StartPoint,
+                    Endpoint = ship.Endpoint,
+                    Direction = ship.Direction.ToString(),
                     Name = ship.Ship.Name
                 })
             })

@@ -1,19 +1,39 @@
 <template>
   <div class="container">
-    <button class="start-button" @click="gotoGame()">START GAME</button>
+    <div v-if="!isLoading">
+      <button class="start-button" @click="gotoGame()">START GAME</button>
+    </div>
+    <div v-else>
+      <LoadingCircle :is-active="isLoading" />
+    </div>
   </div>
 </template>
 
 <script>
+import gameService from '../services/gameService';
+import LoadingCircle from '../components/LoadingCircle.vue';
+
 export default {
   name: 'HomeView',
   data() {
-    return {};
+    return { isLoading: false };
   },
-  components: {},
+  components: { LoadingCircle },
   methods: {
     gotoGame() {
-      this.$router.replace({ name: 'game' });
+      this.isLoading = true;
+
+      gameService
+        .createGame('player1', 'player2')
+        .then((res) => {
+          this.$router.push({ name: 'game', params: { gameId: res.data.gameId } });
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          this.isLoading = false;
+        });
     },
   },
   computed: {},

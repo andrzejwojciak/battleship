@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import GameView from '../views/GameView.vue';
 import ConnectionErrorView from '../views/ConnectionErrorView.vue';
+import NotFoundView from '../views/NotFoundView.vue';
 
 const routes = [
   {
@@ -10,7 +11,7 @@ const routes = [
     component: HomeView,
   },
   {
-    path: '/',
+    path: '/game/:gameId',
     name: 'game',
     component: GameView,
   },
@@ -18,6 +19,11 @@ const routes = [
     path: '/connection-error',
     name: 'connection-error',
     component: ConnectionErrorView,
+  },
+  {
+    path: '/not-found',
+    name: 'not-found',
+    component: NotFoundView,
   },
   {
     path: '/:catchAll(.*)',

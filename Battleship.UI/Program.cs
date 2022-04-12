@@ -7,11 +7,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddSwaggerGen();
+builder.Services.AddCors();
 
 builder.Services.AddCoreLayer();
 builder.Services.AddDataAccessLayer();
 
 var app = builder.Build();
+
+await SeedDatabase(app.Services);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -24,6 +27,13 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
+
+app.UseCors(builder => builder 
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .SetIsOriginAllowed(origin => true)
+    .AllowCredentials());
+
 app.UseStaticFiles();
 app.UseRouting();
 
@@ -34,3 +44,12 @@ app.MapControllerRoute(
 app.MapFallbackToFile("index.html");
 
 app.Run();
+
+async Task SeedDatabase(IServiceProvider serviceProvider)
+{
+    using var scope = serviceProvider.CreateScope();
+
+    var context = scope.ServiceProvider.GetRequiredService<BattleshipDbContext>();
+
+    await context.Database.EnsureCreatedAsync();
+}

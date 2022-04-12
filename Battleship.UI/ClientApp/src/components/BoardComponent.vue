@@ -2,43 +2,43 @@
   <div class="board-grid">
     <div id="blank-cel"></div>
     <div v-for="col in cols" :key="col" :id="'cel-label-' + col">{{ col }}</div>
-    <template v-for="row in rows" :key="row">
+    <template v-for="row in 9" :key="row">
       <div :id="'cel-label-' + row">{{ row }}</div>
       <div v-for="col in 10" :key="col" :id="getCelId(row, col)"></div>
     </template>
   </div>
 </template>
 <script>
+/* eslint-disable no-param-reassign */
 export default {
   props: ['playerName', 'ships'],
   data() {
     return {
       cols: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'],
-      rows: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
     };
   },
   mounted() {
-    const ship = { name: 'xd', direction: 'horizontal', points: ['21', '22', '23'] };
-    this.setShip(ship);
-    const ship2 = { name: 'xd', direction: 'vertical', points: ['26', '36', '46'] };
-    this.setShip(ship2);
-    this.setBoom('21');
-    this.setMiss('85');
+    // this.setBoom('21');
+    // this.setMiss('85');
+    // console.log(shipXd);
+    // console.log(this.ships);
+    this.ships.forEach((ship) => this.setShip(ship));
   },
   methods: {
     setShip(ship) {
-      console.log(ship);
+      const points = this.calculatePoints(ship.direction, ship.startPoint, ship.endpoint);
+      const direction = ship.direction.toLowerCase();
 
-      ship.points.forEach((point, index) => {
+      points.forEach((point, index) => {
         const cel = document.getElementById(`${this.playerName}-cel-${point}`);
         cel.innerHTML = '<div></div>';
 
         if (index === 0) {
-          cel.classList.add(`ship-start-${ship.direction}`);
-        } else if (index === ship.points.length - 1) {
-          cel.classList.add(`ship-end-${ship.direction}`);
+          cel.classList.add(`ship-start-${direction}`);
+        } else if (index === points.length - 1) {
+          cel.classList.add(`ship-end-${direction}`);
         } else {
-          cel.classList.add(`ship-middle-${ship.direction}`);
+          cel.classList.add(`ship-middle-${direction}`);
         }
       });
     },
@@ -54,7 +54,22 @@ export default {
     },
     getCelId(row, col) {
       const celId = parseInt(row, 10) * 10 + parseInt(col, 10) - 10;
-      return `${this.playerName}-cel-${celId}`;
+      return `${this.playerName}-cel-${celId - 1}`;
+    },
+    calculatePoints(direction, startPoint, endPoint) {
+      const points = [];
+
+      while (startPoint <= endPoint) {
+        points.push(startPoint);
+
+        if (direction.toLowerCase() === 'horizontal') {
+          startPoint += 1;
+        } else {
+          startPoint += 10;
+        }
+      }
+
+      return points;
     },
   },
   computed: {},

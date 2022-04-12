@@ -17,13 +17,12 @@ public class BoardShipService : IBoardShipService
 
     public async Task<IEnumerable<BoardShip>> DeploysShipsAsync(Board board)
     {
-        await _context.EnsureCreatedAsync();
         var ships = await _context.Ships.ToListAsync();
 
         var takenFields = new List<int>();
         var boardShips = ships.Select(ship => PlaceOnRandomPosition(ship, takenFields)).ToList();
         board.BoardShips = boardShips;
-        
+
         await _context.BoardShips.AddRangeAsync(boardShips);
         await _context.SaveChangesAsync();
 
@@ -52,23 +51,26 @@ public class BoardShipService : IBoardShipService
             {ShipId = ship.Id, Direction = direction, StartPoint = startingField, Endpoint = endingField};
     }
 
-    private static bool CanPlaceShip(int startingFiled, int endingField, ShipDirection direction, List<int> takenFields)
+    private static bool CanPlaceShip(int startingField, int endingField, ShipDirection direction, List<int> takenFields)
     {
-        if (endingField > 90) return false;
+        if (endingField > 89) return false;
 
         if (direction == ShipDirection.Horizontal)
         {
-            if (Math.Floor((double) (startingFiled / 10)) != Math.Floor((double) (endingField / 10)))
+            var startingFieldTen = (startingField/10)%10;
+            var endingFieldTen = (endingField/10)%10;
+
+            if (startingFieldTen != endingFieldTen)
                 return false;
         }
 
         var fieldsToTake = new List<int>();
 
-        while (startingFiled <= endingField)
+        while (startingField <= endingField)
         {
-            fieldsToTake.Add(startingFiled);
+            fieldsToTake.Add(startingField);
 
-            startingFiled = direction == ShipDirection.Horizontal ? startingFiled + 1 : startingFiled + 10;
+            startingField = direction == ShipDirection.Horizontal ? startingField + 1 : startingField + 10;
         }
 
         var canPlace = !fieldsToTake.Any(fieldToTake => takenFields.Any(takenField => takenField == fieldToTake));
@@ -86,7 +88,7 @@ public class BoardShipService : IBoardShipService
 
         do
         {
-            freeField = random.Next(1, 90);
+            freeField = random.Next(0, 89);
         } while (takenFields.Any(field => field == freeField));
 
         return freeField;
