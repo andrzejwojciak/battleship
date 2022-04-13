@@ -29,6 +29,37 @@ public class BoardShipService : IBoardShipService
         return boardShips;
     }
 
+    public bool AreShipsDestroyed(IEnumerable<Move> moves, IEnumerable<BoardShip> boardShips, int boardId)
+    {
+        var takenFields = new List<int>();
+
+        foreach (var ship in boardShips)
+        {
+            takenFields.AddRange(GetTakenFieldsByShip(ship));
+        }
+
+        return takenFields.All(field =>
+            moves.Any(move => move.AttackedBoardId == boardId && move.AttackedField == field));
+    }
+
+    public IEnumerable<int> GetTakenFieldsByShip(BoardShip boardShip)
+    {
+        var takenFields = new List<int>();
+
+        var startingField = boardShip.StartPoint;
+        var endingField = boardShip.Endpoint;
+        var direction = boardShip.Direction;
+
+        while (startingField <= endingField)
+        {
+            takenFields.Add(startingField);
+
+            startingField = direction == ShipDirection.Horizontal ? startingField + 1 : startingField + 10;
+        }
+
+        return takenFields;
+    }
+
     private static BoardShip PlaceOnRandomPosition(Ship ship, List<int> takenFields)
     {
         bool canPlace;
@@ -53,16 +84,8 @@ public class BoardShipService : IBoardShipService
 
     private static bool CanPlaceShip(int startingField, int endingField, ShipDirection direction, List<int> takenFields)
     {
-        if (endingField > 89) return false;
-
-        if (direction == ShipDirection.Horizontal)
-        {
-            var startingFieldTen = (startingField/10)%10;
-            var endingFieldTen = (endingField/10)%10;
-
-            if (startingFieldTen != endingFieldTen)
-                return false;
-        }
+        if (IsOutOfBound(startingField, endingField, direction))
+            return false;
 
         var fieldsToTake = new List<int>();
 
@@ -79,6 +102,18 @@ public class BoardShipService : IBoardShipService
             takenFields.AddRange(fieldsToTake);
 
         return canPlace;
+    }
+
+    private static bool IsOutOfBound(int startingField, int endingField, ShipDirection direction)
+    {
+        if (endingField > 89) return true;
+
+        if (direction == ShipDirection.Vertical) return false;
+
+        var startingFieldTen = (startingField / 10) % 10;
+        var endingFieldTen = (endingField / 10) % 10;
+
+        return startingFieldTen != endingFieldTen;
     }
 
     private static int GetRandomFreeField(IReadOnlyCollection<int> takenFields)

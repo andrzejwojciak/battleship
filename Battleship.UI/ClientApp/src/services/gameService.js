@@ -16,4 +16,7 @@ export default {
   getGameStateById(gameId) {
     return apiClient.get(`/games/${gameId}`);
   },
+  doRandomMove(gameId) {
+    return apiClient.post(`/games/${gameId}/random-move`);
+  },
 };

@@ -33,7 +33,7 @@ public class GamesController : ControllerBase
     }
 
     [HttpPost("{gameId}/random-move")]
-    public async Task<IActionResult> MakeMove([FromRoute] string gameId)
+    public async Task<IActionResult> DoRandomMove([FromRoute] string gameId)
     {
         var serviceResult = await _gameService.TakeRandomTurnAsync(gameId);
 

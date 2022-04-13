@@ -30,4 +30,16 @@ public class GameProxyRepository : IGameProxyRepository
 
         return game;
     }
+
+    public async Task SaveGameStateAsync(Game game)
+    {
+        await _context.Games.AddAsync(game);
+        await _context.SaveChangesAsync();
+    }
+    
+    public async Task UpdateGameStateAsync(Game game)
+    {
+        _context.Games.Update(game);
+        await _context.SaveChangesAsync();
+    }
 }

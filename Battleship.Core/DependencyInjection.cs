@@ -11,7 +11,6 @@ public static class DependencyInjection
         services.AddScoped<IGameService, GameService>();
         services.AddScoped<IBoardService, BoardService>();
         services.AddScoped<IPlayerService, PlayerService>();
-        services.AddScoped<IShipService, ShipService>();
         services.AddScoped<IBoardShipService, BoardShipService>();
         services.AddScoped<IRandomMoveService, RandomMoveService>();
     }

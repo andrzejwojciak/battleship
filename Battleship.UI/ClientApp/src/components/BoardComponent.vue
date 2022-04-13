@@ -11,18 +11,16 @@
 <script>
 /* eslint-disable no-param-reassign */
 export default {
-  props: ['playerName', 'ships'],
+  props: ['playerName', 'ships', 'opponentMoves'],
   data() {
     return {
       cols: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'],
     };
   },
   mounted() {
-    // this.setBoom('21');
-    // this.setMiss('85');
-    // console.log(shipXd);
-    // console.log(this.ships);
     this.ships.forEach((ship) => this.setShip(ship));
+
+    if (this.opponentMoves) this.opponentMoves.forEach((move) => this.performMove(move));
   },
   methods: {
     setShip(ship) {
@@ -41,6 +39,18 @@ export default {
           cel.classList.add(`ship-middle-${direction}`);
         }
       });
+    },
+    performMove(move) {
+      switch (move.action) {
+        case 0:
+          this.setMiss(move.attackedField);
+          break;
+        case 1:
+          this.setBoom(move.attackedField);
+          break;
+        default:
+          break;
+      }
     },
     setBoom(celId) {
       const cel = document.getElementById(`${this.playerName}-cel-${celId}`);

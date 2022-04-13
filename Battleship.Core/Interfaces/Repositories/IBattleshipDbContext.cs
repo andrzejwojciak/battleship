@@ -12,7 +12,6 @@ public interface IBattleshipDbContext
     DbSet<Player> Players { get; set; }
     DbSet<Ship> Ships { get; set; }
 
-    Task EnsureCreatedAsync();
     Task SaveChangesAsync();
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

@@ -2,7 +2,11 @@
   <div class="buttons-container">
     <div>
       <div>
-        <button class="ship-button inform"></button>
+        <button
+          :disabled="gameIsOver"
+          class="ship-button inform"
+          @click="$emit('nextMove')"
+        ></button>
       </div>
       <div class="button-label">NEXT MOVE</div>
     </div>
@@ -18,7 +22,7 @@
 
 <script>
 export default {
-  props: ['gameId'],
+  props: ['gameId', 'gameIsOver'],
   name: 'ButtonsComponent',
   methods: {},
 };
