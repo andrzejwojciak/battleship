@@ -12,24 +12,35 @@ namespace Battleship.Data.Migrations
                 name: "DestroyedShipName",
                 table: "Moves");
 
-            migrationBuilder.RenameColumn(
+            migrationBuilder.DropColumn(
                 name: "Field",
+                table: "Moves");
+
+            migrationBuilder.AddColumn<int>(
+                name: "AttackedField",
                 table: "Moves",
-                newName: "AttackedField");
+                type: "int",
+                nullable: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
+            migrationBuilder.DropColumn(
                 name: "AttackedField",
-                table: "Moves",
-                newName: "Field");
+                table: "Moves");
 
             migrationBuilder.AddColumn<string>(
                 name: "DestroyedShipName",
                 table: "Moves",
                 type: "nvarchar(max)",
                 nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "Field",
+                table: "Moves",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
         }
     }
 }

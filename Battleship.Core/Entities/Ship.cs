@@ -6,5 +6,5 @@ public class Ship
     public string Name { get; set; }
     public int Length { get; set; }
 
-    public IEnumerable<BoardShip> BoardShips { get; set; }
+    public ICollection<BoardShip> BoardShips { get; set; }
 }

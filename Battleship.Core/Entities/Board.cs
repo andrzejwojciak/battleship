@@ -8,6 +8,6 @@ public class Board
 
     public Game Game { get; set; }
     public Player Player { get; set; }
-    public IEnumerable<BoardShip> BoardShips { get; set; }
-    public IEnumerable<Move> Moves { get; set; }
+    public ICollection<BoardShip> BoardShips { get; set; }
+    public ICollection<Move> Moves { get; set; }
 }

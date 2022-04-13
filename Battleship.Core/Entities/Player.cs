@@ -10,6 +10,6 @@ public class Player
     public string Id { get; set; }
     public string Name { get; set; }
 
-    public IEnumerable<Board> Boards { get; set; }
-    public IEnumerable<Move> Moves { get; set; }
+    public ICollection<Board> Boards { get; set; }
+    public ICollection<Move> Moves { get; set; }
 }

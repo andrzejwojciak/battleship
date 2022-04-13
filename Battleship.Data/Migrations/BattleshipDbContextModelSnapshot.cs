@@ -112,7 +112,7 @@ namespace Battleship.Data.Migrations
                     b.Property<int>("AttackedBoardId")
                         .HasColumnType("int");
 
-                    b.Property<int>("AttackedField")
+                    b.Property<int?>("AttackedField")
                         .HasColumnType("int");
 
                     b.Property<string>("GameId")

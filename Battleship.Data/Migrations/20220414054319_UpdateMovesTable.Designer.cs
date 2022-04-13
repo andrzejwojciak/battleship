@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Battleship.Data.Migrations
 {
     [DbContext(typeof(BattleshipDbContext))]
-    [Migration("20220413164128_UpdateMovesTable")]
+    [Migration("20220414054319_UpdateMovesTable")]
     partial class UpdateMovesTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -114,7 +114,7 @@ namespace Battleship.Data.Migrations
                     b.Property<int>("AttackedBoardId")
                         .HasColumnType("int");
 
-                    b.Property<int>("AttackedField")
+                    b.Property<int?>("AttackedField")
                         .HasColumnType("int");
 
                     b.Property<string>("GameId")
