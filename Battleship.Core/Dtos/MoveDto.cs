@@ -4,6 +4,6 @@ namespace Battleship.Core.Dtos;
 
 public class MoveDto
 {
-    public Guid PlayerId { get; set; }
-    public MoveAction MoveAction { get; set; }
+    public string OffensivePlayerName { get; set; }
+    public MoveAction Action { get; set; }
 }

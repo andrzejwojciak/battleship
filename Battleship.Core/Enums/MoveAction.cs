@@ -4,6 +4,5 @@ public enum MoveAction
 {
     Missed,
     Boomed,
-    DestroyedShip,
     DestroyedAllEnemyShips
 }

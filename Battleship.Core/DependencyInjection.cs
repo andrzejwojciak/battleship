@@ -13,5 +13,6 @@ public static class DependencyInjection
         services.AddScoped<IPlayerService, PlayerService>();
         services.AddScoped<IShipService, ShipService>();
         services.AddScoped<IBoardShipService, BoardShipService>();
+        services.AddScoped<IRandomMoveService, RandomMoveService>();
     }
 }

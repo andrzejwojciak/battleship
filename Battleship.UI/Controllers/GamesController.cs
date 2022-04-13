@@ -27,8 +27,18 @@ public class GamesController : ControllerBase
     {
         var gameStateDto = await _gameService.GetGameStateDtoByIdAsync(gameId);
 
-        return gameStateDto != null
+        return gameStateDto is not null
             ? Ok(gameStateDto)
             : NotFound();
+    }
+
+    [HttpPost("{gameId}/random-move")]
+    public async Task<IActionResult> MakeMove([FromRoute] string gameId)
+    {
+        var serviceResult = await _gameService.TakeRandomTurnAsync(gameId);
+
+        return serviceResult.Succeeded
+            ? Ok(serviceResult.Data)
+            : BadRequest(new {serviceResult.Errors});
     }
 }

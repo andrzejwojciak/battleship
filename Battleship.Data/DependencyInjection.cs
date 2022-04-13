@@ -2,7 +2,7 @@
 using Battleship.Core.Interfaces.Repositories;
 using Battleship.Data.Cache;
 using Battleship.Data.Cache.Interfaces;
-using Battleship.Data.Repositories;
+using Battleship.Data.ProxyRepositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,7 +19,11 @@ public static class DependencyInjection
                 options.UseInMemoryDatabase("BattleshipInMemoryDb");
                 options.ConfigureWarnings(b => b.Ignore(InMemoryEventId.TransactionIgnoredWarning));
             });
-
+        
         services.AddScoped<IBattleshipDbContext>(provider => provider.GetService<BattleshipDbContext>()!);
+
+        services.AddTransient<IGameProxyRepository, GameProxyRepository>();
+        
+        services.AddSingleton<IGameCache, GameCache>();
     }
 }
