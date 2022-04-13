@@ -1,5 +1,6 @@
 ﻿using Battleship.Core.Entities;
 using Battleship.Core.Enums;
+using Battleship.Core.Exceptions;
 using Battleship.Core.Interfaces.Repositories;
 using Battleship.Core.Interfaces.Services;
 using Microsoft.EntityFrameworkCore;
@@ -23,9 +24,6 @@ public class BoardShipService : IBoardShipService
         var boardShips = ships.Select(ship => PlaceOnRandomPosition(ship, takenFields)).ToList();
         board.BoardShips = boardShips;
 
-        await _context.BoardShips.AddRangeAsync(boardShips);
-        await _context.SaveChangesAsync();
-
         return boardShips;
     }
 
@@ -44,6 +42,8 @@ public class BoardShipService : IBoardShipService
 
     public IEnumerable<int> GetTakenFieldsByShip(BoardShip boardShip)
     {
+        IsOutOfBound(boardShip.StartPoint, boardShip.Endpoint, boardShip.Direction);
+
         var takenFields = new List<int>();
 
         var startingField = boardShip.StartPoint;
@@ -84,8 +84,14 @@ public class BoardShipService : IBoardShipService
 
     private static bool CanPlaceShip(int startingField, int endingField, ShipDirection direction, List<int> takenFields)
     {
-        if (IsOutOfBound(startingField, endingField, direction))
+        try
+        {
+            IsOutOfBound(startingField, endingField, direction);
+        }
+        catch (OutOfBoundException)
+        {
             return false;
+        }
 
         var fieldsToTake = new List<int>();
 
@@ -104,16 +110,30 @@ public class BoardShipService : IBoardShipService
         return canPlace;
     }
 
-    private static bool IsOutOfBound(int startingField, int endingField, ShipDirection direction)
+    private static void IsOutOfBound(int startingField, int endingField, ShipDirection direction)
     {
-        if (endingField > 89) return true;
+        if (startingField < 0 || endingField < 0) throw OutOfBoundException.New();
 
-        if (direction == ShipDirection.Vertical) return false;
+        if (startingField > endingField) throw OutOfBoundException.New();
 
-        var startingFieldTen = (startingField / 10) % 10;
-        var endingFieldTen = (endingField / 10) % 10;
+        if (endingField > 89) throw OutOfBoundException.New();
 
-        return startingFieldTen != endingFieldTen;
+        if (direction == ShipDirection.Vertical)
+        {
+            var startingFieldOne = startingField % 10;
+            var endingFieldOne = endingField % 10;
+            
+            if (startingFieldOne != endingFieldOne)
+                throw OutOfBoundException.New();
+        }
+        else
+        {
+            var startingFieldTen = (startingField / 10) % 10;
+            var endingFieldTen = (endingField / 10) % 10;
+
+            if (startingFieldTen != endingFieldTen)
+                throw OutOfBoundException.New();
+        }
     }
 
     private static int GetRandomFreeField(IReadOnlyCollection<int> takenFields)
