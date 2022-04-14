@@ -2,7 +2,7 @@
 
 ## About
 
-Project implements a game with rules based on [battleship game](https://en.wikipedia.org/wiki/Battleship_(game), program randomly places ships on two boards and simulates the gameplay between 2 players.
+Project implements a game with rules based on [battleship game](https://en.wikipedia.org/wiki/Battleship_(game)), program randomly places ships on two boards and simulates the gameplay between 2 players.
 
 ## Solution architecture
 
