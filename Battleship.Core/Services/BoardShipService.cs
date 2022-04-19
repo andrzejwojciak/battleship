@@ -22,6 +22,7 @@ public class BoardShipService : IBoardShipService
 
         var takenFields = new List<int>();
         var boardShips = ships.Select(ship => PlaceOnRandomPosition(ship, takenFields)).ToList();
+        
         board.BoardShips = boardShips;
 
         return boardShips;
@@ -60,7 +61,7 @@ public class BoardShipService : IBoardShipService
         return takenFields;
     }
 
-    private static BoardShip PlaceOnRandomPosition(Ship ship, List<int> takenFields)
+    private BoardShip PlaceOnRandomPosition(Ship ship, List<int> takenFields)
     {
         bool canPlace;
         ShipDirection direction;
@@ -78,11 +79,15 @@ public class BoardShipService : IBoardShipService
             canPlace = CanPlaceShip(startingField, endingField, direction, takenFields);
         } while (!canPlace);
 
-        return new BoardShip
+        var newBoardShip = new BoardShip
             {ShipId = ship.Id, Direction = direction, StartPoint = startingField, Endpoint = endingField};
+        
+        takenFields.AddRange(GetTakenFieldsByShip(newBoardShip));
+
+        return newBoardShip;
     }
 
-    private static bool CanPlaceShip(int startingField, int endingField, ShipDirection direction, List<int> takenFields)
+    private static bool CanPlaceShip(int startingField, int endingField, ShipDirection direction, IEnumerable<int> takenFields)
     {
         try
         {
@@ -102,12 +107,31 @@ public class BoardShipService : IBoardShipService
             startingField = direction == ShipDirection.Horizontal ? startingField + 1 : startingField + 10;
         }
 
-        var canPlace = !fieldsToTake.Any(fieldToTake => takenFields.Any(takenField => takenField == fieldToTake));
+        return KeepsDistance(fieldsToTake, takenFields);
+    }
 
-        if (canPlace)
-            takenFields.AddRange(fieldsToTake);
+    private static bool KeepsDistance(IEnumerable<int> fieldsToTake, IEnumerable<int> takenFields)
+    {
+        foreach (var fieldToTake in fieldsToTake)
+        {
+            var adjacentFields = new List<int>
+            {
+                fieldToTake - 10 - 1,
+                fieldToTake - 10,
+                fieldToTake - 10 + 1,
+                fieldToTake - 1,
+                fieldToTake + 1,
+                fieldToTake + 10 - 1,
+                fieldToTake + 10,
+                fieldToTake + 10 + 1
+            };
 
-        return canPlace;
+            var anyAdjacentField = adjacentFields.Any(field => takenFields.Any(takenField => takenField == field));
+
+            if (anyAdjacentField) return false;
+        }
+
+        return true;
     }
 
     private static void IsOutOfBound(int startingField, int endingField, ShipDirection direction)
@@ -122,7 +146,7 @@ public class BoardShipService : IBoardShipService
         {
             var startingFieldOne = startingField % 10;
             var endingFieldOne = endingField % 10;
-            
+
             if (startingFieldOne != endingFieldOne)
                 throw OutOfBoundException.New();
         }
