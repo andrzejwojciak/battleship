@@ -29,6 +29,6 @@ Solution is divided to 4 projects. Backend part is written in .NET 6 and uses en
 ### steps
 1. Clone repository
 2. Open cloned repository folder and change directory to ./Battleship.UI/
-3. Run command `dotnet run` and wint for backend to build
+3. Run command `dotnet run` and wait for backend to build
 4. Open url https://localhost:7284/ and wait for frontend to build
 5. You can use the app
